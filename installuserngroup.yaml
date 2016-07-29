@@ -1,0 +1,14 @@
+---
+
+- hosts: test
+  tasks:
+  - name: Check if user exists
+    shell: /usr/bin/getent group | awk -F":" '{print $1'}
+    register: prod_groups 
+
+  - name: Test
+    group: name=ansible state=present
+    when: '"{{item}}" in prod_groups.stdout_lines'
+    with_items:
+         ansible
+  - user: name=ansible-user shell=/bin/bash groups=ansible 
