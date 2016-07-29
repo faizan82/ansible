@@ -3,26 +3,14 @@
 - hosts: test
   remote_user: root 
   tasks: 
-  - name: setup user
-    user: name=tomcat7 state=present
-
-- hosts: test
-  remote_user: tomcat7
-  tasks: 
-  - name: group
-    group: name=jenkins state=present 
-  - name: user
-    user: name=jenkins home=/home/jenkins groups=jenkins
-  - name: install tomcat7 on remote server 
-    apt: name=tomcat7 state=present
-    environment:
-       JENKINS_HOME: /home/jenkins
-  - name: download tomcat war
-    get_url: url=http://mirrors.jenkins-ci.org/war-stable/1.651.3/jenkins.war dest=/var/lib/tomcat7/webapps/ force=no
-    notify: restart tomcat7
-  - name: Install Jdk 
-    apt: name=openjdk-7-jdk state=present 
-
-  handlers:
-  - name: restart tomcat7
-    service: name=tomcat7 state=restarted
+  - name: setup groups
+    group: name={{item.name}} state={{item.state}}
+    with_items:
+        - { name: 'tomcat7', state: 'present' }
+        - { name: 'jenkins', state: 'present' }
+  #- name: setup tomcat
+   # group: name=tomcat7 state=present 
+  #- name: jenkins
+   # user: name=jenkins groups=jenkins home=/home/jenkins state=present
+  #- name: tomcat
+   # user: name=tomcat7 groups=tomcat7 home=/usr/share/tomcat7 state=present
