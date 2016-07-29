@@ -8,6 +8,12 @@
     with_items:
         - { name: 'tomcat7', state: 'present' }
         - { name: 'jenkins', state: 'present' }
+  - name: setup users
+    user: name={{item.name}} state={{item.state}} shell={{item.shell}} home={{item.home}}
+    #when: item.shell is defined
+    with_items:
+        - { name: 'jenkins', state: 'present' , shell: '/bin/bash' , home: '/home/jenkins' }
+        - { name: 'tomcat7', state: 'present' , shell: '/bin/false', home: '/usr/share/tomcat7'}
   #- name: setup tomcat
    # group: name=tomcat7 state=present 
   #- name: jenkins
