@@ -3,6 +3,12 @@
 - hosts: test
   remote_user: root 
   tasks: 
+  - name: install banner
+    vars:
+       welcome_msg: "Hi there. Welcome to Jenkins host"
+       info_msg1: "Money its they say is the doer of all evil today"
+       info_msg2: "But if you ask for any rise , its not surprise they are giving none away"
+    template: src=templates/motd.j2 dest=/etc/motd
   - name: setup groups
     group: name={{item.name}} state={{item.state}}
     with_items:
@@ -14,10 +20,3 @@
     with_items:
         - { name: 'jenkins', state: 'present' , shell: '/bin/bash' , home: '/home/jenkins' }
         - { name: 'tomcat7', state: 'present' , shell: '/bin/false', home: '/usr/share/tomcat7'}
-  - name: install banner
-    vars:
-       welcome_msg: "Hi there. Welcome to Jenkins host"
-       info_msg1: "Money its they say is the doer of all evil today"
-       info_msg2: "But if you ask for any rise , its not surprise they are giving none away"
-    template: src=templates/motd.j2 dest=/etc/motd
-    
