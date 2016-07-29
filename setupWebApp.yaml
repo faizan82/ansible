@@ -1,6 +1,12 @@
 ---
 
 - hosts: test
+  remote_user: root 
+  tasks: 
+  - name: setup user
+    user: name=tomcat7 state=present
+
+- hosts: test
   remote_user: tomcat7
   tasks: 
   - name: group
