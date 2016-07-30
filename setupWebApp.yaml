@@ -2,6 +2,8 @@
 
 - hosts: test
   remote_user: root 
+  environment:
+     JENKINS_HOME: /home/jenkins
   vars:
       tomcat_home: /usr/share/tomcat7
   tasks: 
@@ -31,10 +33,23 @@
     apt: name=tomcat7 state=present
 
   - name: setup tomcat dirs permissions
-    file: dest={{tomcat_home}}  owner=tomcat7 group=tomcat7 mode=0755 recurse=yes 
+    file: dest={{item}} owner=tomcat7 group=tomcat7 mode=0755 recurse=yes 
+    with_items:
+        - "{{tomcat_home}}"
+        - "/var/lib/tomcat7"
     tags:
         tomcat7_dir_setup
 
+  - name: Check env
+    shell: echo $JENKINS_HOME 
+    register: shellout
+    
+  - debug: var=shellout
+
+  - name: Download jenkins, extract under tomcat_home/webapps, change ownership
+    get_url: 
+       url=http://mirrors.jenkins-ci.org/war-stable/1.651.3/jenkins.war 
+       dest=/var/lib/tomcat7/webapps/jenkins.war
   
 
     #environment:
