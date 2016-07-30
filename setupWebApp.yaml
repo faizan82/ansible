@@ -2,6 +2,8 @@
 
 - hosts: test
   remote_user: root 
+  vars:
+      tomcat_home: /usr/share/tomcat7
   tasks: 
   - name: install banner
     # Any other way to define vars?
@@ -25,14 +27,15 @@
         - { name: 'jenkins', state: 'present' , shell: '/bin/bash' , home: '/home/jenkins' }
         - { name: 'tomcat7', state: 'present' , shell: '/bin/false', home: '/usr/share/tomcat7'}
 
-    #vars:
-        #tomcat_home: /usr/share/tomcat7
   - name: install tomcat
     apt: name=tomcat7 state=present
+
   - name: setup tomcat dirs permissions
-    file: dest=/usr/share/tomcat7  owner=tomcat7 group=tomcat7 mode=0755 recurse=yes 
+    file: dest={{tomcat_home}}  owner=tomcat7 group=tomcat7 mode=0755 recurse=yes 
     tags:
         tomcat7_dir_setup
+
+  
 
     #environment:
       #CATALINA_BASE: "{{tomcat_home}}"
