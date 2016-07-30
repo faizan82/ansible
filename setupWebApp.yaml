@@ -4,17 +4,20 @@
   remote_user: root 
   tasks: 
   - name: install banner
+    # Any other way to define vars?
     vars:
        welcome_msg: "Hi there. Welcome to Jenkins host"
        info_msg1: "Money its they say is the doer of all evil today"
        info_msg2: "But if you ask for any rise , its not surprise they are giving none away"
        final_msg: "This is a jenkins host"
     template: src=templates/motd.j2 dest=/etc/motd
+
   - name: setup groups
     group: name={{item.name}} state={{item.state}}
     with_items:
         - { name: 'tomcat7', state: 'present' }
         - { name: 'jenkins', state: 'present' }
+
   - name: setup users
     user: name={{item.name}} state={{item.state}} shell={{item.shell}} home={{item.home}}
     #when: item.shell is defined
@@ -22,3 +25,23 @@
         - { name: 'jenkins', state: 'present' , shell: '/bin/bash' , home: '/home/jenkins' }
         - { name: 'tomcat7', state: 'present' , shell: '/bin/false', home: '/usr/share/tomcat7'}
 
+    #vars:
+        #tomcat_home: /usr/share/tomcat7
+  - name: install tomcat
+    apt: name=tomcat7 state=present
+  - name: setup tomcat dirs permissions
+    file: dest=/usr/share/tomcat7  owner=tomcat7 group=tomcat7 mode=0755 recurse=yes 
+    tags:
+        tomcat7_dir_setup
+
+    #environment:
+      #CATALINA_BASE: "{{tomcat_home}}"
+      #CATALINA_HOME: "{{tomcat_home}}"
+  # set jenkins home 
+  # set catalina base and home 
+  # install jdk and add to path 
+
+#- hosts: test 
+  #remote_user: tomcat7
+  #- name: download jenkins, specific version  and install under catalina base
+  # notify to restart on every change 
